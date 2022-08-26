@@ -15,9 +15,10 @@ steps:
       '--min-instances','1', 
       '--add-cloudsql-instances', 'cbi-yunus:us-central1:cbipostgres',
       '--port','5000', '--allow-unauthenticated',
-      '--set-env-vars', 'DB_USER='postgres',
-      '--set-env-vars', 'DB_PASS='root',
-      '--set-env-vars', 'DB_NAME='chicago_business_intelligence'
+      '--set-env-vars', 'DB_USER=postgres',
+      '--set-env-vars', 'DB_PASS=root',
+      '--set-env-vars', 'DB_NAME=chicago_business_intelligence',
+      '--set-env-vars', 'INSTANCE_UNIX_SOCKET=/cloudsql/cbi-yunus:us-central1:cbipostgres'
     ]
 images:
 - gcr.io/cbi-yunus/frontend-microservice
