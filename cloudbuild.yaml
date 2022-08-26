@@ -1,0 +1,12 @@
+steps:
+# Steps to build a docker image for go-microservice, push it to container registry and deploy it to cloud run.  
+- name: "gcr.io/cloud-builders/docker"
+  args: ['build', '-t', 'gcr.io/cbi-yunus/frontend-microservice','.']
+- name: "gcr.io/cloud-builders/docker"
+  args: ['push', 'gcr.io/cbi-yunus/frontend-microservice']
+  
+- name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+  entrypoint: gcloud
+  args: ['run', 'deploy','frontend-microservice', '--image','gcr.io/cbi-yunus/frontend-microservice', '--region','us-central1', '--min-instances','1', '--port','5000', '--allow-unauthenticated']
+images:
+- gcr.io/cbi-yunus/frontend-microservice
