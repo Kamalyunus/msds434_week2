@@ -1,4 +1,4 @@
-
+#pulling slim python version
 FROM python:3.10-slim
 
 EXPOSE 5000
