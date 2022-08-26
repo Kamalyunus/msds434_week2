@@ -23,7 +23,7 @@ def getconn()->pg8000.dbapi.Connection:
 
 pool = sqlalchemy.create_engine(
     "postgresql+pg8000://",
-    creator=getconn,
+    creator=getconn(),
     pool_size=5,
     max_overflow=2,
     pool_timeout=30,  
