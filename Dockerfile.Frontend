@@ -9,4 +9,4 @@ COPY . ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "flask.py"]   
+CMD ["python", "frontend_flask.py"]   
