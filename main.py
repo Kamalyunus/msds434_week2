@@ -9,20 +9,15 @@ import pg8000
 # create the Flask app
 app = Flask(__name__)
 
-INSTANCE_CONNECTION_NAME="cbi-yunus:us-central1:cbipostgres"
-DB_USER = os.environ["DB_USER"]
-DB_PASS = os.environ["DB_PASS"]
-DB_NAME = os.environ["DB_NAME"]
-
 # initialize Cloud SQL Python Connector object
 connector = Connector()
 def getconn()->pg8000.dbapi.Connection:
     conn: pg8000.dbapi.Connection = connector.connect(
-        INSTANCE_CONNECTION_NAME,
+        "cbi-yunus:us-central1:cbipostgres",
         "pg8000",
-        user=DB_USER,
-        password=DB_PASS,
-        db=DB_NAME
+        user="postgres",
+        password="root",
+        db="chicago_business_intelligence"
     )
     return conn
 
