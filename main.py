@@ -1,15 +1,45 @@
 from flask import Flask, request, send_file
 import pandas as pd
 from prophet import Prophet
+import os
+from google.cloud.sql.connector import Connector, IPTypes
+import pg8000
+import sqlalchemy
 
 # create the Flask app
 app = Flask(__name__)
+# initialize Cloud SQL Python Connector object
+connector = Connector()
+
+def getconn() -> pg8000.dbapi.Connection:
+    conn: pg8000.dbapi.Connection = connector.connect(
+        os.environ["INSTANCE_CONNECTION_NAME"],
+        "pg8000",
+        user=os.environ["DB_USER"],
+        password= os.environ["DB_PASS"],
+        db=os.environ["DB_NAME"],
+        ip_type=IPTypes.PRIVATE if os.environ.get("PRIVATE_IP") else IPTypes.PUBLIC,
+    )
+    return conn
+
+pool = sqlalchemy.create_engine(
+    "postgresql+pg8000://",
+    creator=getconn,
+    pool_size=5,
+    max_overflow=2,
+    pool_timeout=30,  
+    pool_recycle=1800,
+    # [END_EXCLUDE]
+)
+    
 
 @app.route('/covid')
 def predict():
     zipcode = request.args.get('zipcode')
     horizon = request.args.get('horizon', type=int)
-    
+    with pool.connect as db_conn:
+        results = db_conn.execute("SELECT * FROM covid_weekly limit 5").fetchall()
+        
     df = pd.read_csv('COVID19_Cases.csv')
     df_zipcode = df[df['ZIP Code']==zipcode].rename(columns = {'Week Start': 'ds','Cases - Weekly': 'y'})
  
@@ -19,7 +49,8 @@ def predict():
     forecast = model.predict(future_dates)
     fig=model.plot(forecast, xlabel="Weeks", ylabel="Weekly Covid Cases for Zipcode: " + zipcode)
     fig.savefig('prophetplot.svg')
-    return send_file('prophetplot.svg')
+    #return send_file('prophetplot.svg')
+    return results
 
 if __name__ == '__main__':
     # run app in debug mode on port 5000
