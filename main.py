@@ -2,23 +2,26 @@ from flask import Flask, request, send_file
 import pandas as pd
 from prophet import Prophet
 import os
-from google.cloud.sql.connector import Connector, IPTypes
-import pg8000
+from google.cloud.sql.connector import Connector
 import sqlalchemy
 
 # create the Flask app
 app = Flask(__name__)
+
+INSTANCE_CONNECTION_NAME=os.environ["INSTANCE_CONNECTION_NAME"]
+DB_USER = os.environ["DB_USER"]
+DB_PASS = os.environ["DB_PASS"]
+DB_NAME = os.environ["DB_NAME"]
+
 # initialize Cloud SQL Python Connector object
 connector = Connector()
-
-def getconn() -> pg8000.dbapi.Connection:
-    conn: pg8000.dbapi.Connection = connector.connect(
-        os.environ["INSTANCE_CONNECTION_NAME"],
+def getconn():
+    conn = connector.connect(
+        INSTANCE_CONNECTION_NAME,
         "pg8000",
-        user=os.environ["DB_USER"],
-        password= os.environ["DB_PASS"],
-        db=os.environ["DB_NAME"],
-        ip_type=IPTypes.PRIVATE if os.environ.get("PRIVATE_IP") else IPTypes.PUBLIC,
+        user=DB_USER,
+        password=DB_PASS,
+        db=DB_NAME
     )
     return conn
 
@@ -39,7 +42,7 @@ def predict():
     horizon = request.args.get('horizon', type=int)
     with pool.connect as db_conn:
         results = db_conn.execute("SELECT * FROM covid_weekly limit 5").fetchall()
-        
+
     df = pd.read_csv('COVID19_Cases.csv')
     df_zipcode = df[df['ZIP Code']==zipcode].rename(columns = {'Week Start': 'ds','Cases - Weekly': 'y'})
  
