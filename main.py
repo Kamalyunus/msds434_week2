@@ -4,6 +4,7 @@ from prophet import Prophet
 import os
 from google.cloud.sql.connector import Connector
 import sqlalchemy
+import pg8000
 
 # create the Flask app
 app = Flask(__name__)
@@ -15,8 +16,8 @@ DB_NAME = os.environ["DB_NAME"]
 
 # initialize Cloud SQL Python Connector object
 connector = Connector()
-def getconn():
-    conn = connector.connect(
+def getconn()->pg8000.dbapi.Connection:
+    conn: pg8000.dbapi.Connection = connector.connect(
         INSTANCE_CONNECTION_NAME,
         "pg8000",
         user=DB_USER,
