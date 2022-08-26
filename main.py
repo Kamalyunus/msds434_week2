@@ -8,7 +8,7 @@ import sqlalchemy
 # create the Flask app
 app = Flask(__name__)
 
-INSTANCE_CONNECTION_NAME=os.environ["INSTANCE_CONNECTION_NAME"]
+INSTANCE_CONNECTION_NAME="cbi-yunus:us-central1:cbipostgres"
 DB_USER = os.environ["DB_USER"]
 DB_PASS = os.environ["DB_PASS"]
 DB_NAME = os.environ["DB_NAME"]
