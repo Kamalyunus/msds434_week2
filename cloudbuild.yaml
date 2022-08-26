@@ -13,11 +13,7 @@ steps:
       '--image','gcr.io/cbi-yunus/frontend-microservice', 
       '--region','us-central1', 
       '--min-instances','1', 
-      '--port','5000', '--allow-unauthenticated', 
-      '--add-cloudsql-instances', 'cbi-yunus:us-central1:cbipostgres',
-      '--set-env-vars', 'DB_USER='postgres',
-      '--set-env-vars', 'DB_PASS='root',
-      '--set-env-vars', 'DB_NAME='chicago_business_intelligence'
+      '--port','5000', '--allow-unauthenticated'
     ]
 images:
 - gcr.io/cbi-yunus/frontend-microservice
